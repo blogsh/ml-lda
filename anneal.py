@@ -5,7 +5,7 @@ import scipy.special as fun
 import scipy.optimize as opt
 
 # Define process parameters
-phi = 0.7
+phi = 0.5
 theta = [
 	[0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
 	[0.0, 0.0, 0.0, 0.5, 0.0, 0.5]
@@ -66,7 +66,7 @@ while T > 1e-10:
 		optZ = Z[:]
 		
 		thetaEst, phiEst, llW, llZ = estimate(Z)
-		print('log likelihood sum:', llW + llZ)
+		print('log likelihood:', llW + llZ)
 		print('phi', phiEst)
 		print('thetaA', thetaEst[0])
 		print('thetaB', thetaEst[1])

@@ -4,10 +4,10 @@ import numpy.random as rand
 import scipy.special as fun
 
 # Define process parameters
-alpha = 0.001
-beta = [0.001, 0.001]
+alpha = 1
+beta = [1, 1]
 
-phi = 0.7
+phi = 0.5
 theta = [
 	[0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
 	[0.0, 0.0, 0.0, 0.5, 0.0, 0.5]
@@ -36,7 +36,7 @@ while True:
 		nzk[Z[i], W[i]] -= 1
 
 		# Compute probabilities
-		p = [(nz[j] + alpha) * prod(nzk[j,:] + beta[j]) / (nz[j] + 6 * beta[j]) for j in range(2)]
+		p = array([(nz[j] + alpha) * prod(nzk[j,:] + beta[j]) / (nz[j] + 6 * beta[j]) for j in range(2)])
 		p /= sum(p)
 
 		# Choose new assignment and update counts
@@ -44,19 +44,20 @@ while True:
 		nz[Z[i]] += 1
 		nzk[Z[i], W[i]] += 1
 
-		# Compute estimates
-		thetaEst = [nzk[j,:] / nz[j] for j in range(2)]
-		phiEst = nz[1] / n
+	# Compute estimates
+	phiEst = (nz[1] + alpha - 1) / (n + 2 * alpha - 2)
+	thetaEst = [(nzk[j,:] + beta[j] - 1) / (nz[j] + 6 * beta[j] - 6) for j in range(2)] 
 
-		# Compute log-likelihoods
-		mask0 = thetaEst[0] > 0
-		mask1 = thetaEst[1] > 0
+	# Compute log-likelihoods
+	mask0 = thetaEst[0] > 0
+	mask1 = thetaEst[1] > 0
 
-		llW = sum(multiply(log(thetaEst[0][mask0]), nzk[0,mask0]))
-		llW += sum(multiply(log(thetaEst[1][mask1]), nzk[1,mask1]))
-		llZ = nz[1] * log(phiEst) +  nz[0] * log(1 - phiEst)
+	llW = sum(multiply(log(thetaEst[0][mask0]), nzk[0,mask0]))
+	llW += sum(multiply(log(thetaEst[1][mask1]), nzk[1,mask1]))
+	llZ = nz[1] * log(phiEst) +  nz[0] * log(1 - phiEst)
 
-		print('phi', phiEst)
-		print('thetaA', thetaEst[0])
-		print('thetaB', thetaEst[1])
-		print('log likelihood sum', llW + llZ)
+	print('phi', phiEst)
+	print('thetaA', thetaEst[0])
+	print('thetaB', thetaEst[1])
+	print('log likelihood', llW + llZ)
+	print()
